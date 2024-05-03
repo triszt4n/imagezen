@@ -2,7 +2,10 @@ import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import { NextResponse } from 'next/server'
 
 const s3Client = new S3Client({
-  // No credentials are needed because amplify app has role
+  credentials: {
+    accessKeyId: process.env.S3_ACCESS_KEY_ID,
+    secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+  },
   region: process.env.S3_REGION,
 })
 
@@ -22,8 +25,15 @@ async function uploadFileToS3(file, fileName) {
 }
 
 export async function POST(request) {
-  if (!process.env.S3_BUCKET_NAME || !process.env.S3_REGION) {
-    throw new Error('S3_BUCKET_NAME and S3_REGION must be set in env')
+  if (
+    ![
+      'S3_BUCKET_NAME',
+      'S3_REGION',
+      'S3_ACCESS_KEY_ID',
+      'S3_SECRET_ACCESS_KEY',
+    ].every((key) => process.env.hasOwnProperty(key))
+  ) {
+    throw new Error('Environment variable is missing.')
   }
 
   try {
