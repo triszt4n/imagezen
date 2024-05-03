@@ -8,7 +8,7 @@ const s3Client = new S3Client({
 
 async function uploadFileToS3(file, fileName) {
   const fileBuffer = file
-  console.log('uploading: ' + fileName)
+  console.log('[UPLOAD] ' + fileName)
 
   const params = {
     Bucket: process.env.S3_BUCKET_NAME,
@@ -35,6 +35,7 @@ export async function POST(request) {
 
     return NextResponse.json({ success: true, fileName })
   } catch (error) {
+    console.error('[UPLOAD FAILED] ', error)
     return NextResponse.json({ error })
   }
 }
