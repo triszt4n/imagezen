@@ -2,7 +2,9 @@
 const nextConfig = {
   images: {
     remotePatterns: [
-      { hostname: 'imagezen-uploaded-images.s3.eu-central-1.amazonaws.com' },
+      {
+        hostname: `${process.env.S3_BUCKET_NAME}.s3.${process.env.S3_REGION}.amazonaws.com`,
+      },
     ],
   },
 }

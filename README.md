@@ -1,8 +1,8 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-
 ## Create a .env file
-Please do not use NEXT_PUBLIC_
+
+Please do not use NEXT*PUBLIC*
 
 ```bash
 S3_REGION=eu-west-2
@@ -45,5 +45,3 @@ You can find example policies here [https://docs.aws.amazon.com/AmazonS3/latest/
     ]
 }
 ```
-
-

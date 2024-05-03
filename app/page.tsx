@@ -4,7 +4,7 @@ import S3UploadForm from './components/S3UploadForm'
 export default function Home() {
   return (
     <main className={styles.main}>
-      <S3UploadForm/>
+      <S3UploadForm />
     </main>
   )
 }
