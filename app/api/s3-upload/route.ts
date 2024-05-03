@@ -22,6 +22,10 @@ async function uploadFileToS3(file, fileName) {
 }
 
 export async function POST(request) {
+  if (!process.env.S3_BUCKET_NAME || !process.env.S3_REGION) {
+    throw new Error('S3_BUCKET_NAME and S3_REGION must be set in env')
+  }
+
   try {
     const formData = await request.formData()
     const file = formData.get('file')
