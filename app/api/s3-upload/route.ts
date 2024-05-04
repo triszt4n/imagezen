@@ -47,9 +47,12 @@ export async function POST(request) {
     const buffer = Buffer.from(await file.arrayBuffer())
     const fileName = await uploadFileToS3(buffer, file.name)
 
-    return NextResponse.json({ success: true, fileName })
+    return NextResponse.json({ success: true, fileName }, { status: 200 })
   } catch (error) {
     console.error('[UPLOAD FAILED] ', error)
-    return NextResponse.json({ error })
+    return NextResponse.json(
+      { error },
+      { status: error['$metadata']?.httpStatusCode || 500 },
+    )
   }
 }

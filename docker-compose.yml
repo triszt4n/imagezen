@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:13.14
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=imagezen
+    restart: always
+    volumes:
+      - db_folder:/var/lib/postgresql/data
+    networks:
+      - imagezen-network
+    ports:
+      - '5432:5432'
+networks:
+  imagezen-network:
+volumes:
+  db_folder:
+    external: true
