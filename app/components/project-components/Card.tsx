@@ -1,8 +1,8 @@
+import { MapPinIcon } from '@heroicons/react/24/outline'
 import { Badge, Chip } from '@nextui-org/react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
-import LaptopSuite from '../svg/laptop-suite.svg'
+import { useRouter } from 'next/navigation'
 
 export default function Card() {
   const router = useRouter()
@@ -11,8 +11,8 @@ export default function Card() {
     <div className="w-full">
       <header>
         <Badge
-          content={}
-          color='secondary'
+          content="valami"
+          color="secondary"
           placement="bottom-right"
           classNames={{
             base: 'aspect-[21/9] w-full',
@@ -20,40 +20,33 @@ export default function Card() {
           }}
         >
           <Image
-            alt={`Image for ${project.title}`}
+            alt={`Image`}
             className={`z-0 w-full h-full object-contain rounded-lg cursor-pointer`}
-            src={
-              project.mainImage
-                ? urlForImage(project.mainImage)
-                    ?.width(1280)
-                    .height(540)
-                    .url() ?? LaptopSuite
-                : LaptopSuite
-            }
+            src=""
             height={540}
             width={1280}
-            onClick={() => router.push(`/project/${project.slug.current}`)}
+            onClick={() => {}}
           />
         </Badge>
         <h4 className="text-3xl font-extrabold tracking-tight my-2">
-          <Link href={`/project/${project.slug.current}`}>{project.title}</Link>
+          <Link href={`/project/`}>linky</Link>
         </h4>
       </header>
       <footer>
-        <p className="mb-2">{project.shortDesc}</p>
+        <p className="mb-2">short desc</p>
         <div className="flex items-center gap-2 mt-2">
-          {project.techStacks?.map((techStack, index) => (
+          {[].map((techStack, index) => (
             <Chip key={`${techStack}-${index}`} size="sm">
               {techStack}
             </Chip>
           ))}
         </div>
-        {project.githubRepos?.map((p) => (
+        {[].map((p) => (
           <div
             key={p}
             className="flex items-center gap-2 mt-2 text-foreground text-opacity-70 hover:text-opacity-100"
           >
-            <GitHubSvg className="w-4 h-4 fill-current" />
+            <MapPinIcon className="w-4 h-4" />
             <a
               className="hover:underline"
               href={`https://github.com/${p}`}
