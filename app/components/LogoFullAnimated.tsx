@@ -1,6 +1,5 @@
 'use client'
 
-import { useTheme } from 'next-themes'
 import { DetailedHTMLProps, HTMLAttributes, useEffect, useState } from 'react'
 
 export default function LogoFullAnimated(
@@ -10,7 +9,6 @@ export default function LogoFullAnimated(
   useEffect(() => {
     setIsActive(true)
   }, [])
-  const { theme } = useTheme()
 
   return (
     <svg

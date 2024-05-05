@@ -5,6 +5,9 @@ const nextConfig = {
       {
         hostname: `${process.env.S3_BUCKET_NAME}.s3.${process.env.S3_REGION}.amazonaws.com`,
       },
+      {
+        hostname: `lh3.googleusercontent.com`,
+      },
     ],
   },
 }

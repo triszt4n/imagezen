@@ -1,9 +1,8 @@
 import { Inter } from 'next/font/google'
 import Footer from './components/Footer'
-import { NavbarSitewide } from './components/NavbarSitewide'
+import NavbarSitewide from './components/NavbarSitewide'
 import './global.css'
 import Providers from './providers'
-import { allRoutes } from './utils/routes'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -21,7 +20,7 @@ export default function RootLayout({ children }) {
       <body>
         <Providers>
           <div className="d-flex flex-col min-h-screen">
-            <NavbarSitewide routes={allRoutes} />
+            <NavbarSitewide />
             {children}
             <Footer />
           </div>
