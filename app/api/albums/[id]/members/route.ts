@@ -8,7 +8,7 @@ export async function POST(
   req: Request,
   { params }: { params: { id: string } },
 ) {
-  const body = (await req.json()) as { memberIds: string[] }
+  const body = (await req.json()) as { id: string }
   const session = await getServerSession(authOptions)
 
   if (!session?.user?.id)
@@ -18,7 +18,6 @@ export async function POST(
     where: {
       userId: session.user.id,
       albumId: params.id,
-      role: Role.USER,
     },
   })
 
@@ -28,11 +27,20 @@ export async function POST(
       { status: 403 },
     )
 
-  const data = await prisma.albumUser.createMany({
-    data: body.memberIds.map((userId) => ({
-      userId,
-      albumId: params.id,
-    })),
+  const data = await prisma.albumUser.create({
+    data: {
+      user: {
+        connect: {
+          id: body.id,
+        },
+      },
+      album: {
+        connect: {
+          id: params.id,
+        },
+      },
+      role: Role.USER,
+    },
   })
 
   return NextResponse.json(data)

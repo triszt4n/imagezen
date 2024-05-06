@@ -15,14 +15,16 @@ import {
 import { Photo, User } from '@prisma/client'
 import Image from 'next/image'
 import { FC, useState } from 'react'
-import action from '../actions/revalidatePhotos'
-import { formatDate } from '../utils/date-utils'
+import revalidatePhotosAction from '../../actions/revalidatePhotos'
+import { formatDate } from '../../utils/date-utils'
 
 type Props = {
   photo: Photo & { author: User }
+  isPublicAlbum?: boolean
   src: string
   onClick?: () => void
   onError?: (error: string) => void
+  showDelete?: boolean
 }
 
 function shortenStringWithEllipsis(str, maxLength) {
@@ -36,7 +38,14 @@ function shortenStringWithEllipsis(str, maxLength) {
   return firstHalf + '...' + secondHalf // Concatenate with ellipsis in between
 }
 
-export const PhotoCard: FC<Props> = ({ photo, src, onClick, onError }) => {
+export const PhotoCard: FC<Props> = ({
+  photo,
+  src,
+  isPublicAlbum,
+  onClick,
+  onError,
+  showDelete,
+}) => {
   const [submitStatus, setSubmitStatus] = useState<
     'idle' | 'loading' | 'error' | 'success'
   >('idle')
@@ -57,7 +66,7 @@ export const PhotoCard: FC<Props> = ({ photo, src, onClick, onError }) => {
         throw new Error('Failed to delete photo')
       }
       setSubmitStatus('idle')
-      await action()
+      await revalidatePhotosAction()
     } catch (error) {
       onError(error.message)
       setSubmitStatus('error')
@@ -82,51 +91,58 @@ export const PhotoCard: FC<Props> = ({ photo, src, onClick, onError }) => {
           src={src}
           onClick={onClick}
         />
-        <CardFooter className="before:bg-white/10 border-white/20 border-1 overflow-hidden p-1 absolute before:rounded-xl rounded-large bottom-0.5 w-[calc(100%_-_2px)] ml-[1px] shadow-small z-10 gap-0.5">
+        <CardFooter className="before:bg-white/10 font border-white/20 border-1 overflow-hidden p-1 absolute before:rounded-xl rounded-large bottom-0.5 w-[calc(100%_-_2px)] ml-[1px] shadow-small z-10 gap-0.5">
           <Snippet
-            classNames={{ base: 'flex-1', pre: 'brake-all text-[0.65rem]' }}
-            size="sm"
+            classNames={{
+              base: 'flex-1',
+              pre: 'brake-all text-sm font-sans',
+            }}
+            size={isPublicAlbum ? 'sm' : 'md'}
             onCopy={onCopy}
             symbol=""
             tooltipProps={{
               content: 'Copy URL to clipboard',
             }}
+            variant="solid"
+            hideCopyButton={!isPublicAlbum}
           >
             {shortenStringWithEllipsis(photo.filename, 30)}
           </Snippet>
-          <div>
-            <Popover
-              placement="top"
-              showArrow
-              offset={10}
-              isOpen={isOpen}
-              onOpenChange={(open) => setIsOpen(open)}
-            >
-              <PopoverTrigger>
-                <Button isIconOnly size="sm" color="danger">
-                  {submitStatus === 'loading' ? (
-                    <Spinner size="sm" />
-                  ) : submitStatus === 'error' ? (
-                    <ExclamationTriangleIcon className="h-4 w-4" />
-                  ) : (
-                    <TrashIcon className="h-4 w-4" />
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent>
-                <div className="px-1 py-2 w-full">
-                  <p className="text-small font-bold text-foreground">
-                    Delete this photo?
-                  </p>
-                  <div className="mt-2 flex flex-col gap-2 w-full">
-                    <Button size="sm" color="danger" onClick={onDelete}>
-                      Confirm
-                    </Button>
+          {showDelete && (
+            <div>
+              <Popover
+                placement="top"
+                showArrow
+                offset={10}
+                isOpen={isOpen}
+                onOpenChange={(open) => setIsOpen(open)}
+              >
+                <PopoverTrigger>
+                  <Button isIconOnly size="sm" color="danger">
+                    {submitStatus === 'loading' ? (
+                      <Spinner size="sm" />
+                    ) : submitStatus === 'error' ? (
+                      <ExclamationTriangleIcon className="h-4 w-4" />
+                    ) : (
+                      <TrashIcon className="h-4 w-4" />
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <div className="px-1 py-2 w-full">
+                    <p className="text-small font-bold text-foreground">
+                      Delete this photo?
+                    </p>
+                    <div className="mt-2 flex flex-col gap-2 w-full">
+                      <Button size="sm" color="danger" onClick={onDelete}>
+                        Confirm
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              </PopoverContent>
-            </Popover>
-          </div>
+                </PopoverContent>
+              </Popover>
+            </div>
+          )}
         </CardFooter>
         <CardFooter className="before:bg-white/10 border-white/20 border-1 overflow-hidden p-1 absolute before:rounded-xl rounded-large top-0.5 w-[calc(100%_-_2px)] ml-[1px] shadow-small z-10 gap-0.5">
           <div className="flex flex-1 gap-2 items-center">

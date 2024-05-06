@@ -1,17 +1,19 @@
 'use client'
 
-import { Photo } from '@prisma/client'
+import { Photo, User } from '@prisma/client'
 import { FC, useState } from 'react'
 import Lightbox from 'yet-another-react-lightbox'
 import 'yet-another-react-lightbox/styles.css'
+import ErrorModal from '../forms/ErrorModal'
 import { PhotoCard } from './PhotoCard'
-import ErrorModal from './forms/ErrorModal'
 
 type Props = {
-  photos: Array<Photo & { src: string }>
+  photos: Array<Photo & { src: string; author: User }>
+  isPublicAlbum?: boolean
+  showDelete?: boolean
 }
 
-const PhotosGrid: FC<Props> = ({ photos }) => {
+const PhotosGrid: FC<Props> = ({ photos, isPublicAlbum, showDelete }) => {
   const [open, setOpen] = useState(false)
   const [index, setIndex] = useState(0)
   const [error, setError] = useState<string | null>(null)
@@ -29,6 +31,8 @@ const PhotosGrid: FC<Props> = ({ photos }) => {
               setIndex(photos.indexOf(photo))
             }}
             onError={(error) => setError(error)}
+            isPublicAlbum={isPublicAlbum}
+            showDelete={showDelete}
           />
         ))}
       </div>

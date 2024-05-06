@@ -1,14 +1,36 @@
 import { Role } from '@prisma/client'
 import { getServerSession } from 'next-auth'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { authOptions } from '../../lib/authOptions'
 import prisma from '../../lib/prisma'
 import { NewAlbumInputs } from '../../types/album.types'
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
+  const sortBy = req.nextUrl.searchParams.get('sortby')
+  const [sortField, sortDirection] = sortBy?.split('_') ?? ['createdAt', 'desc']
+
   const data = await prisma.album.findMany({
     where: {
       public: true,
+    },
+    include: {
+      users: {
+        include: {
+          user: true,
+        },
+      },
+      photos: {
+        take: 1,
+        orderBy: {
+          createdAt: 'asc',
+        },
+      },
+      _count: {
+        select: { photos: true },
+      },
+    },
+    orderBy: {
+      [sortField]: sortDirection,
     },
   })
 

@@ -5,6 +5,7 @@ import { Checkbox, Spinner } from '@nextui-org/react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { Form, FormProvider, useForm } from 'react-hook-form'
+import revalidateAlbumsAction from '../../actions/revalidateAlbums'
 import { NewAlbumInputs } from '../../types/album.types'
 import ActionButton from '../ActionButton'
 import ErrorModal from './ErrorModal'
@@ -54,6 +55,7 @@ export default function NewAlbumForm({ title, defaultValues }: Props) {
             setSubmitStatus('success')
             setTimeout(() => {
               setSubmitStatus('idle')
+              revalidateAlbumsAction()
               router.push('/albums')
             }, 5000)
           }}

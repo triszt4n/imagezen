@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { getSignedFileUrl } from '../../../../lib/getSignedUrl'
 import prisma from '../../../../lib/prisma'
 
 export async function GET(
@@ -11,8 +12,21 @@ export async function GET(
     },
     include: {
       author: true,
+      album: true,
     },
   })
 
-  return NextResponse.json(data)
+  const mappedData = await Promise.all(
+    data.map(async (photo) => {
+      if (!photo.album.public) {
+        const signedUrl = await getSignedFileUrl(
+          `${photo.albumId}/${photo.id}.${photo.filename.split('.').pop()}`,
+          process.env.S3_BUCKET_NAME,
+        )
+        photo.src = signedUrl
+      }
+      return photo
+    }),
+  )
+  return NextResponse.json(mappedData)
 }

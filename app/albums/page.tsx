@@ -1,24 +1,26 @@
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
-import { Link } from '@nextui-org/react'
+import { Role } from '@prisma/client'
 import { headers } from 'next/headers'
-import NextLink from 'next/link'
 import ActionButton from '../components/ActionButton'
 import Container from '../components/Container'
-import { AlbumWithUsers } from '../types/album.types'
-import { formatDateEasy } from '../utils/date-utils'
+import AlbumCard from '../components/album-components/AlbumCard'
+import { AlbumFull } from '../types/album.types'
 
 async function getData(): Promise<
-  { error: { message: string } } | AlbumWithUsers[]
+  { error: { message: string } } | AlbumFull[]
 > {
   const response = await fetch(`${process.env.NEXTAUTH_URL}/api/albums/user`, {
     method: 'GET',
     headers: headers(),
+    next: {
+      tags: ['albums'],
+    },
   })
   const data = await response.json()
   if (!response.ok) {
     return { error: data }
   }
-  return data as AlbumWithUsers[]
+  return data
 }
 
 export default async function MyAlbumsPage() {
@@ -40,7 +42,7 @@ export default async function MyAlbumsPage() {
           </div>
         ) : (
           <>
-            <div className="flex flex-row justify-end">
+            <div className="flex flex-row gap-8 justify-end">
               <ActionButton
                 icon={<PlusCircleIcon className="h-4 w-4" />}
                 className="flex-row-reverse"
@@ -49,26 +51,17 @@ export default async function MyAlbumsPage() {
                 Create a new album
               </ActionButton>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
               {data.map((album) => (
-                <div
+                <AlbumCard
                   key={album.id}
-                  className="bg-white shadow-lg rounded-lg p-6"
-                >
-                  <Link
-                    as={NextLink}
-                    href={`/albums/${album.id}`}
-                    className="text-xl font-semibold"
-                  >
-                    {album.name}
-                  </Link>
-                  <p className="text-sm text-gray-500">{album.description}</p>
-                  <p className="text-sm text-gray-500">
-                    {album.users.length} members
-                  </p>
-                  <p>{album.public ? 'Public' : 'Non-public'}</p>
-                  <p>{formatDateEasy(album.createdAt as unknown as string)}</p>
-                </div>
+                  album={{
+                    ...album,
+                    author: album.users.find((u) => u.role === Role.ADMIN).user,
+                  }}
+                  firstPhoto={album.photos[0]}
+                  showPublicChip
+                />
               ))}
             </div>
           </>

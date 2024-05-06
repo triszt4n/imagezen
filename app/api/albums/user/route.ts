@@ -1,12 +1,11 @@
 import { getServerSession } from 'next-auth'
 import { NextResponse } from 'next/server'
 import { authOptions } from '../../../lib/authOptions'
+import { getSignedFileUrl } from '../../../lib/getSignedUrl'
 import prisma from '../../../lib/prisma'
 
 export async function GET(req: Request) {
   const session = await getServerSession(authOptions)
-
-  console.log(session)
 
   if (!session?.user?.id)
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
@@ -18,11 +17,38 @@ export async function GET(req: Request) {
     include: {
       album: {
         include: {
-          users: true,
+          users: {
+            include: {
+              user: true,
+            },
+          },
+          photos: {
+            take: 1,
+            orderBy: {
+              createdAt: 'asc',
+            },
+          },
+          _count: {
+            select: { photos: true },
+          },
         },
       },
     },
   })
 
-  return NextResponse.json(data.map((au) => au.album))
+  const mappedData = await Promise.all(
+    data.map(async (au) => {
+      if (!au.album.public) {
+        const firstPhoto = au.album.photos[0]
+        const signedUrl = await getSignedFileUrl(
+          `${firstPhoto.albumId}/${firstPhoto.id}.${firstPhoto.filename.split('.').pop()}`,
+          process.env.S3_BUCKET_NAME,
+        )
+        au.album.photos[0].src = signedUrl
+      }
+      return au.album
+    }),
+  )
+
+  return NextResponse.json(mappedData)
 }

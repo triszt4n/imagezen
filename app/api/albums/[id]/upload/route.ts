@@ -28,11 +28,13 @@ export async function POST(
   { params }: { params: { id: string } },
 ) {
   const session = await getServerSession(authOptions)
+  const formData = await request.formData()
+
+  console.log('[UPLOADING FILES] ', formData.getAll('filepond'))
 
   if (!session?.user?.id)
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
 
-  const formData = await request.formData()
   const files = formData
     .getAll('filepond')
     .filter((entry) => entry instanceof File) as File[]

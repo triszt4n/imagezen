@@ -1,3 +1,3 @@
 import { Photo } from '@prisma/client'
 
-export type NewPhotoInputs = Pick<Photo, 'albumId' | 'ext' | 'filename'>
+export type PhotoWithSrc = Photo & { src: string }

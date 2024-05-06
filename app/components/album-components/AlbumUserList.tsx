@@ -12,12 +12,11 @@ const AlbumUserList: React.FC<Props> = ({ users, ...props }) => {
   return (
     <div
       {...props}
-      className={`w-full max-w-[260px] border-small px-1 py-2 rounded-small border-default-200 dark:border-default-100 ${props.className}`}
+      className={`w-full border-small px-1 py-2 rounded-small border-default-200 dark:border-default-100 ${props.className}`}
     >
       <Listbox
         classNames={{
-          base: 'max-w-xs',
-          list: 'max-h-[300px] overflow-scroll',
+          list: 'max-h-[300px]',
         }}
         variant="flat"
         topContent={

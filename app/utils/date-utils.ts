@@ -9,6 +9,19 @@ export function formatDate(
   })
 }
 
+export function formatDateWithTime(
+  date: string,
+  locales: Intl.LocalesArgument = 'hu-HU',
+) {
+  return new Date(date).toLocaleDateString(locales, {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+  })
+}
+
 export function formatDateEasy(
   date: string,
   locales: Intl.LocalesArgument = 'hu-HU',

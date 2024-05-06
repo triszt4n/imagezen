@@ -1,11 +1,12 @@
 import { Divider } from '@nextui-org/react'
-import { Photo } from '@prisma/client'
+import { Photo, Role, User } from '@prisma/client'
 import { getServerSession } from 'next-auth'
 import { headers } from 'next/headers'
-import AlbumUserList from '../../components/AlbumUserList'
 import Container from '../../components/Container'
-import PhotosGrid from '../../components/PhotosGrid'
+import AlbumUserList from '../../components/album-components/AlbumUserList'
+import NewMemberForm from '../../components/forms/NewMemberForm'
 import { UploadField } from '../../components/forms/UploadField'
+import PhotosGrid from '../../components/photo-components/PhotosGrid'
 import { authOptions } from '../../lib/authOptions'
 import { AlbumWithUsers } from '../../types/album.types'
 import { formatDate } from '../../utils/date-utils'
@@ -18,6 +19,9 @@ async function getData(
   const response = await fetch(`${process.env.NEXTAUTH_URL}/api/albums/${id}`, {
     method: 'GET',
     headers: headers(),
+    next: {
+      tags: ['members'],
+    },
   })
   const data = await response.json()
   if (!response.ok) {
@@ -29,9 +33,23 @@ async function getData(
   }
 }
 
+async function getUsers(): Promise<{ error: { message: string } } | User[]> {
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/users`, {
+    method: 'GET',
+    headers: headers(),
+  })
+  const data = await response.json()
+  if (!response.ok) {
+    return { error: data }
+  }
+  return data
+}
+
 async function getPhotos(
   id: string,
-): Promise<{ error: { message: string } } | Photo[]> {
+): Promise<
+  { error: { message: string } } | Array<Photo & { author: User; src: string }>
+> {
   const response = await fetch(
     `${process.env.NEXTAUTH_URL}/api/albums/${id}/photos`,
     {
@@ -56,7 +74,14 @@ export default async function AlbumPage({
 }) {
   const data = await getData(params.id)
   const photos = await getPhotos(params.id)
+  const users = await getUsers()
   const session = await getServerSession(authOptions)
+  const amIMember = (data: AlbumWithUsers & { photoCount: number }) =>
+    data.users.some((user) => user.userId === session?.user?.id)
+  const amIAdmin = (data: AlbumWithUsers & { photoCount: number }) =>
+    data.users.some(
+      (user) => user.userId === session?.user?.id && user.role === Role.ADMIN,
+    )
 
   return (
     <Container className="py-12">
@@ -70,7 +95,7 @@ export default async function AlbumPage({
       ) : (
         <div className="flex flex-col gap-16">
           <div className="flex flex-col md:flex-row gap-8 justify-between">
-            <div className="flex-1">
+            <div className="w-full">
               <h2 className="py-4 text-3xl font-extrabold leading-none tracking-tight">
                 Album: {data.name}
               </h2>
@@ -82,11 +107,10 @@ export default async function AlbumPage({
                 #photos: {data.photoCount || 'no photos yet'}
               </p>
               <Divider className="my-2" />
-              {data.users.some((user) => user.userId === session?.user?.id) && (
+              {amIMember(data) && (
                 <div className="text-sm text-gray-500">
                   <p className="mb-1">Upload new photos here:</p>
                   <UploadField
-                    fieldName="files"
                     multiple
                     maxFiles={10}
                     required
@@ -96,8 +120,23 @@ export default async function AlbumPage({
                 </div>
               )}
             </div>
-            <div className="flex justify-end">
+            <div className="flex flex-col min-w-96 gap-4">
               <AlbumUserList users={data.users} />
+              {'error' in users ? (
+                <div className="text-xs">
+                  Error getting users. {users.error.message}
+                </div>
+              ) : (
+                amIAdmin(data) && (
+                  <NewMemberForm
+                    users={users.filter(
+                      (user) =>
+                        !data.users.map((u) => u.userId).includes(user.id),
+                    )}
+                    albumId={params.id}
+                  />
+                )
+              )}
             </div>
           </div>
           {'error' in photos ? (
@@ -109,10 +148,9 @@ export default async function AlbumPage({
             </div>
           ) : (
             <PhotosGrid
-              photos={photos.map((p) => ({
-                ...p,
-                src: `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.S3_REGION}.amazonaws.com/${p.albumId}/${p.id}.${p.filename.split('.').pop()}`,
-              }))}
+              photos={photos}
+              isPublicAlbum={data.public}
+              showDelete={amIAdmin(data)}
             />
           )}
         </div>
