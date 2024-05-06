@@ -35,9 +35,10 @@ model Session {
 }
 
 model Album {
-  id     String  @id @default(cuid())
-  name   String
-  public Boolean @default(false)
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  public      Boolean @default(false)
 
   photos Photo[]
 
@@ -64,15 +65,18 @@ model AlbumUser {
 }
 
 model Photo {
-  id       String  @id @default(cuid())
+  id       String @id @default(cuid())
   filename String
-  content  String?
+  mimeType String
 
   author   User?   @relation(fields: [authorId], references: [id])
   authorId String?
 
   album   Album?  @relation(fields: [albumId], references: [id])
   albumId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model User {

@@ -1,10 +1,6 @@
 'use client'
 
-import {
-  ArrowLeftEndOnRectangleIcon,
-  MoonIcon,
-  SunIcon,
-} from '@heroicons/react/24/outline'
+import { MoonIcon, SunIcon } from '@heroicons/react/24/outline'
 import {
   Avatar,
   Button,
@@ -18,10 +14,11 @@ import {
   NavbarItem,
   NavbarMenu,
 } from '@nextui-org/react'
-import { signOut, useSession } from 'next-auth/react'
+import { signIn, signOut, useSession } from 'next-auth/react'
 import { useTheme } from 'next-themes'
 import { default as NextLink } from 'next/link'
 import { Suspense, useEffect, useState } from 'react'
+import GoogleIcon from './GoogleIcon'
 import Logo from './Logo'
 
 export default function NavbarSitewide() {
@@ -68,6 +65,7 @@ export default function NavbarSitewide() {
                   size="md"
                   showFallback
                   src={session.user.image}
+                  imgProps={{ referrerPolicy: 'no-referrer' }}
                 />
               </DropdownTrigger>
               <DropdownMenu
@@ -95,12 +93,11 @@ export default function NavbarSitewide() {
             </Dropdown>
           ) : (
             <Button
-              as={NextLink}
               variant="flat"
               className="text-md"
-              href="/login"
               aria-label="Login button"
-              startContent={<ArrowLeftEndOnRectangleIcon className="h-4 w-4" />}
+              endContent={<GoogleIcon className="h-4 w-4" />}
+              onPress={() => signIn('google')}
             >
               Log in
             </Button>

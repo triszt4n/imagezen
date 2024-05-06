@@ -1,12 +1,15 @@
 import { ArrowRightIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
-import { DetailedHTMLProps, FC, HTMLAttributes } from 'react'
+import { ButtonHTMLAttributes, DetailedHTMLProps, FC } from 'react'
 
 export type ActionButtonProps = {
   href?: string
   newTab?: boolean
   icon?: JSX.Element
-} & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>
+} & DetailedHTMLProps<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  HTMLButtonElement
+>
 
 const ActionButton: FC<ActionButtonProps> = ({
   children,
@@ -18,7 +21,7 @@ const ActionButton: FC<ActionButtonProps> = ({
 }) =>
   href ? (
     <Link href={href} target={newTab ? '_blank' : '_self'}>
-      <div
+      <button
         {...props}
         className={
           `h-14 w-auto cursor-pointer ` +
@@ -30,10 +33,10 @@ const ActionButton: FC<ActionButtonProps> = ({
       >
         {children}
         {icon ?? <ArrowRightIcon className="h-4 w-4" />}
-      </div>
+      </button>
     </Link>
   ) : (
-    <div
+    <button
       {...props}
       className={
         `h-14 w-auto cursor-pointer ` +
@@ -45,7 +48,7 @@ const ActionButton: FC<ActionButtonProps> = ({
     >
       {children}
       {icon ?? <ArrowRightIcon className="h-4 w-4" />}
-    </div>
+    </button>
   )
 
 export default ActionButton
