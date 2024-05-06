@@ -16,6 +16,9 @@ async function getData(): Promise<
       tags: ['albums'],
     },
   })
+
+  console.log('RESPONSE', response)
+
   const data = await response.json()
   if (!response.ok) {
     return { error: data }
@@ -25,6 +28,8 @@ async function getData(): Promise<
 
 export default async function MyAlbumsPage() {
   const data = await getData()
+
+  console.log('DATADATA', data)
 
   return (
     <section className="py-12">
