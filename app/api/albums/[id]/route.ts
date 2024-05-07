@@ -12,9 +12,21 @@ export async function PUT(
   const data = await prisma.album.update({
     where: { id: params.id },
     data: body,
+    include: {
+      photos: {
+        select: {
+          id: true,
+          filename: true,
+        },
+      },
+    },
   })
 
-  const s3Response = await updateObjectAcls(params.id, body.public)
+  const s3Response = await updateObjectAcls(
+    params.id,
+    data.photos.map((p) => p.id + '.' + p.filename.split('.').pop()),
+    body.public,
+  )
   console.log('[S3 ACL UPDATE]', s3Response)
 
   return NextResponse.json(data)

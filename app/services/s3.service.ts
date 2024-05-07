@@ -7,13 +7,23 @@ import {
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { s3Client } from '../lib/s3Client'
 
-export async function updateObjectAcls(albumId: string, publicRead: boolean) {
-  const command = new PutObjectAclCommand({
-    Bucket: process.env.S3_BUCKET_NAME,
-    Key: albumId,
-    ACL: publicRead ? 'public-read' : 'private',
-  })
-  return s3Client.send(command)
+export async function updateObjectAcls(
+  albumId: string,
+  photoIds: string[],
+  publicRead: boolean,
+) {
+  const commands = photoIds.map(
+    (photoId) =>
+      new PutObjectAclCommand({
+        Bucket: process.env.S3_BUCKET_NAME,
+        Key: `${albumId}/${photoId}`,
+        ACL: publicRead ? 'public-read' : 'private',
+      }),
+  )
+  const responses = await Promise.all(
+    commands.map((command) => s3Client.send(command)),
+  )
+  return responses
 }
 
 export async function uploadFileToS3(

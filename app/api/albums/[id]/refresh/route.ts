@@ -8,14 +8,33 @@ export async function POST(
 ) {
   const data = await prisma.album.findUnique({
     where: { id: params.id },
+    include: {
+      photos: {
+        select: {
+          id: true,
+          filename: true,
+        },
+      },
+    },
   })
 
   if (!data) {
     return NextResponse.json({ message: 'Album not found' }, { status: 404 })
   }
 
-  const s3Response = await updateObjectAcls(params.id, data.public)
-  console.log('[S3 ACL UPDATE]', s3Response)
-
-  return NextResponse.json(s3Response)
+  try {
+    const s3Response = await updateObjectAcls(
+      params.id,
+      data.photos.map((p) => p.id + '.' + p.filename.split('.').pop()),
+      data.public,
+    )
+    console.log('[S3 ACL UPDATE]', s3Response)
+    return NextResponse.json(s3Response)
+  } catch (error) {
+    console.error('[S3 ERROR]', error)
+    return NextResponse.json(
+      { message: 'Error updating S3 ACL' },
+      { status: 500 },
+    )
+  }
 }

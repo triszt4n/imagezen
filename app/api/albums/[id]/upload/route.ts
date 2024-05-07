@@ -40,19 +40,29 @@ export async function POST(
         })
 
         const buffer = Buffer.from(await file.arrayBuffer())
-        const fileName = await uploadFileToS3(
-          buffer,
-          `${params.id}/${photo.id}.${file.name.split('.').pop()}`,
-          photo.album!.public,
-        )
-        console.log('[UPLOAD SUCCESS] ' + fileName)
+        try {
+          const fileName = await uploadFileToS3(
+            buffer,
+            `${params.id}/${photo.id}.${file.name.split('.').pop()}`,
+            photo.album!.public,
+          )
+          console.log('[UPLOAD SUCCESS] ' + fileName)
+        } catch (error) {
+          console.error('[UPLOAD FAILED] ', error)
+          const res = await prisma.photo.delete({
+            where: { id: photo.id },
+          })
+          console.log('[DELETE PHOTO] ', res)
+          throw new Error('Error uploading file to S3')
+        }
+
         return photo
       }),
     )
 
     return NextResponse.json(photos, { status: 200 })
   } catch (error) {
-    console.error('[UPLOAD FAILED] ', error)
+    console.error('[END UPLOAD FAILED] ', error)
     return NextResponse.json(
       { error },
       { status: (error as any)['$metadata']?.httpStatusCode || 500 },

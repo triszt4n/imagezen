@@ -30,6 +30,12 @@ export default async function AlbumPage({
     data.users.some(
       (user) => user.userId === session?.user?.id && user.role === Role.ADMIN,
     )
+  const headersPushed = (() => {
+    const h = Object.fromEntries(headers().entries())
+    delete h['content-type']
+    delete h['Content-type']
+    return h
+  })()
 
   return (
     <Container className="py-12">
@@ -63,7 +69,7 @@ export default async function AlbumPage({
                     maxFiles={10}
                     required
                     uploadPath={`${process.env.NEXTAUTH_URL}/api/albums/${params.id}/upload`}
-                    headers={Object.fromEntries(headers().entries())}
+                    headers={headersPushed}
                   />
                 </div>
               )}

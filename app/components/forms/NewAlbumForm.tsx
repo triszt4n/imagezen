@@ -53,11 +53,8 @@ export default function NewAlbumForm({ title, defaultValues }: Props) {
           }}
           onSuccess={() => {
             setSubmitStatus('success')
-            setTimeout(() => {
-              setSubmitStatus('idle')
-              revalidateAlbumsAction()
-              router.push('/albums')
-            }, 5000)
+            revalidateAlbumsAction()
+            router.push('/albums')
           }}
           onError={async ({ response, error }) => {
             setSubmitStatus('error')

@@ -34,18 +34,25 @@ export const UploadField = ({
         process: {
           url: uploadPath,
           headers: headers,
+          method: 'POST',
           onload: (response) => {
             revalidatePhotosAction()
             return response[0].id
           },
         },
       }}
-      acceptedFileTypes={[accept]}
+      // acceptedFileTypes={[accept]}
       // @ts-ignore
       onupdatefiles={setFiles}
+      onprocessfile={(error, file) => {
+        setTimeout(() => {
+          setFiles([])
+        }, 1000)
+      }}
       // maxTotalFileSize={`${process.env.MAX_TOTAL_FILE_SIZE_IN_MB ?? 10}MB`}
       labelIdle={helper}
       allowImagePreview
+      allowRevert={false}
     />
   )
 }
