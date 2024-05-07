@@ -7,6 +7,8 @@ import prisma from '../../../lib/prisma'
 export async function GET(req: Request) {
   const session = await getServerSession(authOptions)
 
+  return NextResponse.json({ session }, { status: 203 })
+
   console.log('SESSION', session)
 
   if (!session?.user?.id)
