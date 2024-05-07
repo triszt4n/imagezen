@@ -52,6 +52,8 @@ export const UploadField = ({
       // maxTotalFileSize={`${process.env.MAX_TOTAL_FILE_SIZE_IN_MB ?? 10}MB`}
       labelIdle={helper}
       allowImagePreview
+      allowFileSizeValidation
+      maxFileSize={`${process.env.MAX_FILE_SIZE_IN_MB ?? 10}MB`}
       allowRevert={false}
     />
   )
