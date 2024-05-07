@@ -13,29 +13,6 @@ async function updateObjectAcls(albumId: string, publicRead: boolean) {
   return s3Client.send(command)
 }
 
-export async function GET(
-  req: Request,
-  { params }: { params: { id: string } },
-) {
-  const data = await prisma.album.findUnique({
-    where: { id: params.id },
-    include: {
-      users: {
-        include: {
-          user: true,
-        },
-      },
-      _count: {
-        select: { photos: true },
-      },
-    },
-  })
-
-  return NextResponse.json(data ?? { message: 'Album not found' }, {
-    status: data ? 200 : 404,
-  })
-}
-
 export async function PUT(
   req: Request,
   { params }: { params: { id: string } },

@@ -1,35 +1,12 @@
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import { Role } from '@prisma/client'
-import { headers } from 'next/headers'
 import ActionButton from '../components/ActionButton'
 import Container from '../components/Container'
 import AlbumCard from '../components/album-components/AlbumCard'
-import { AlbumFull } from '../types/album.types'
-
-async function getData(): Promise<
-  { error: { message: string } } | AlbumFull[]
-> {
-  const response = await fetch(`/api/albums/user`, {
-    method: 'GET',
-    headers: headers(),
-    next: {
-      tags: ['albums'],
-    },
-  })
-
-  console.log('RESPONSE', response)
-
-  const data = await response.json()
-  if (!response.ok) {
-    return { error: data }
-  }
-  return data
-}
+import { getAlbumsUser } from '../services/albums.services'
 
 export default async function MyAlbumsPage() {
-  const data = await getData()
-
-  console.log('DATADATA', data)
+  const data = await getAlbumsUser()
 
   return (
     <section className="py-12">
