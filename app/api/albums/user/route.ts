@@ -1,14 +1,12 @@
+import { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
 import { NextResponse } from 'next/server'
 import { authOptions } from '../../../lib/authOptions'
 import { getSignedFileUrl } from '../../../lib/getSignedUrl'
 import prisma from '../../../lib/prisma'
 
-export async function GET(req: Request) {
-  const session = await getServerSession(authOptions)
-
-  return NextResponse.json({ session }, { status: 203 })
-
+export async function GET(req: NextApiRequest, res: NextApiResponse) {
+  const session = await getServerSession(req, res, authOptions)
   console.log('SESSION', session)
 
   if (!session?.user?.id)
