@@ -1,16 +1,23 @@
-import { NextApiRequest, NextApiResponse } from 'next'
-import { getServerSession } from 'next-auth'
-import { NextResponse } from 'next/server'
+import { Session, getServerSession } from 'next-auth'
+import { NextRequest, NextResponse } from 'next/server'
 import { authOptions } from '../../../lib/authOptions'
 import { getSignedFileUrl } from '../../../lib/getSignedUrl'
 import prisma from '../../../lib/prisma'
 
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
-  const session = await getServerSession(req, res, authOptions)
-  console.log('SESSION', session)
+export async function GET(req: NextRequest, res: NextResponse) {
+  let session: Session | null = null
+  try {
+    session = await getServerSession(authOptions)
+    console.log('SESSION', session)
+  } catch (error) {
+    console.error('SESSION ERROR', error)
+  }
 
   if (!session?.user?.id)
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
+    return NextResponse.json(
+      { message: 'Unauthorized, no session provided.' },
+      { status: 401 },
+    )
 
   try {
     const data = await prisma.albumUser.findMany({
