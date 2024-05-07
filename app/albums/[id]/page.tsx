@@ -5,6 +5,7 @@ import { headers } from 'next/headers'
 import Container from '../../components/Container'
 import AlbumUserList from '../../components/album-components/AlbumUserList'
 import NewMemberForm from '../../components/forms/NewMemberForm'
+import RefreshButton from '../../components/forms/RefreshButton'
 import { UploadField } from '../../components/forms/UploadField'
 import PhotosGrid from '../../components/photo-components/PhotosGrid'
 import { authOptions } from '../../lib/authOptions'
@@ -79,6 +80,9 @@ export default async function AlbumPage({
                 />
               )}
             </div>
+          </div>
+          <div className="flex flex-row justify-end">
+            <RefreshButton albumId={params.id} headers={headers()} />
           </div>
           <PhotosGrid
             photos={photos}

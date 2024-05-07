@@ -40,14 +40,10 @@ export const UploadField = ({
           },
         },
       }}
-      instantUpload={false}
       acceptedFileTypes={[accept]}
-      required={required}
       // @ts-ignore
       onupdatefiles={setFiles}
-      allowMultiple={multiple}
-      maxFiles={maxFiles}
-      maxTotalFileSize={`${process.env.MAX_TOTAL_FILE_SIZE_IN_MB ?? 10}MB`}
+      // maxTotalFileSize={`${process.env.MAX_TOTAL_FILE_SIZE_IN_MB ?? 10}MB`}
       labelIdle={helper}
       allowImagePreview
     />

@@ -1,27 +1,8 @@
-import { PutObjectCommand } from '@aws-sdk/client-s3'
 import { getServerSession } from 'next-auth'
 import { NextResponse } from 'next/server'
 import { authOptions } from '../../../../lib/authOptions'
 import prisma from '../../../../lib/prisma'
-import { s3Client } from '../../../../lib/s3Client'
-
-async function uploadFileToS3(
-  fileBuffer: Buffer,
-  key: string,
-  publicRead: boolean,
-) {
-  console.log('[UPLOADING TO S3] ' + key)
-
-  const command = new PutObjectCommand({
-    Bucket: process.env.S3_BUCKET_NAME,
-    Key: key,
-    Body: fileBuffer,
-    ACL: publicRead ? 'public-read' : 'private',
-  })
-
-  await s3Client.send(command)
-  return key
-}
+import { uploadFileToS3 } from '../../../../services/s3.service'
 
 export async function POST(
   request: Request,

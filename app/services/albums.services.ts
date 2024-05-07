@@ -1,8 +1,8 @@
 import { Photo } from '@prisma/client'
 import { Session, getServerSession } from 'next-auth'
 import { authOptions } from '../lib/authOptions'
-import { getSignedFileUrl } from '../lib/getSignedUrl'
 import prisma from '../lib/prisma'
+import { getSignedFileUrl } from './s3.service'
 
 export async function getAlbumsUser() {
   let session: Session | null = null

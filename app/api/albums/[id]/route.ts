@@ -1,17 +1,7 @@
-import { PutObjectAclCommand } from '@aws-sdk/client-s3'
 import { NextResponse } from 'next/server'
 import prisma from '../../../lib/prisma'
-import { s3Client } from '../../../lib/s3Client'
+import { updateObjectAcls } from '../../../services/s3.service'
 import { NewAlbumInputs } from '../../../types/album.types'
-
-async function updateObjectAcls(albumId: string, publicRead: boolean) {
-  const command = new PutObjectAclCommand({
-    Bucket: process.env.S3_BUCKET_NAME,
-    Key: albumId,
-    ACL: publicRead ? 'public-read' : 'private',
-  })
-  return s3Client.send(command)
-}
 
 export async function PUT(
   req: Request,
