@@ -15,6 +15,11 @@ const nextConfig = {
       fullUrl: true,
     },
   },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: `${process.env.MAX_FILE_TOTAL_SIZE_IN_MB}mb`,
+    },
+  },
 }
 
 module.exports = nextConfig
