@@ -11,6 +11,7 @@ import { authOptions } from '../../lib/authOptions'
 import { getAlbum, getAlbumPhotos } from '../../services/albums.services'
 import { getUsers } from '../../services/users.services'
 import { AlbumWithUsers } from '../../types/album.types'
+import { PhotoFull } from '../../types/photo.types'
 import { formatDate } from '../../utils/date-utils'
 
 export default async function AlbumPage({
@@ -19,7 +20,7 @@ export default async function AlbumPage({
   params: { id: string }
 }) {
   const data = await getAlbum(params.id)
-  const photos = await getAlbumPhotos(params.id)
+  const photos = (await getAlbumPhotos(params.id)) as PhotoFull[]
   const users = await getUsers()
   const session = await getServerSession(authOptions)
   const amIMember = (data: AlbumWithUsers) =>

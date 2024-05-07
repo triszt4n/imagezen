@@ -50,7 +50,7 @@ export const TextAreaField = ({
       defaultValue={defaultValue}
       placeholder={placeholder}
       isInvalid={!!errors?.[fieldName]}
-      errorMessage={errors?.[fieldName]?.message.toString()}
+      errorMessage={errors?.[fieldName]?.message?.toString()}
       description={helper}
       {...register(fieldName, {
         required: required ? 'Required field' : false,

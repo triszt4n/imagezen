@@ -27,13 +27,14 @@ const AlbumUserList: React.FC<Props> = ({ users, ...props }) => {
         label="Assigned to"
       >
         {users.map((item) => (
-          <ListboxItem key={item.id} textValue={item.user?.name}>
+          <ListboxItem key={item.id} textValue={item.user?.name ?? undefined}>
             <div className="flex gap-2 items-center">
               <Avatar
-                alt={item.user?.name}
+                alt={item.user?.name ?? 'Unknown'}
                 className="flex-shrink-0"
                 size="sm"
-                src={item.user?.image}
+                src={item.user?.image ?? ''}
+                showFallback
                 imgProps={{ referrerPolicy: 'no-referrer' }}
               />
               <div className="flex flex-col">

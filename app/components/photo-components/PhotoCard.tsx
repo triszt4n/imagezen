@@ -12,7 +12,7 @@ import {
   Snippet,
   Spinner,
 } from '@nextui-org/react'
-import { Photo, User } from '@prisma/client'
+import { Album, Photo, User } from '@prisma/client'
 import Image from 'next/image'
 import { FC, useState } from 'react'
 import revalidatePhotosAction from '../../actions/revalidatePhotos'
@@ -20,9 +20,8 @@ import { formatDate } from '../../utils/date-utils'
 import { shortenStringWithEllipsis } from '../../utils/string-utils'
 
 type Props = {
-  photo: Photo & { author: User }
+  photo: Photo & { author?: User; album?: Album; src?: string }
   isPublicAlbum?: boolean
-  src: string
   onClick?: () => void
   onError?: (error: string) => void
   showDelete?: boolean
@@ -30,7 +29,6 @@ type Props = {
 
 export const PhotoCard: FC<Props> = ({
   photo,
-  src,
   isPublicAlbum,
   onClick,
   onError,
@@ -42,7 +40,7 @@ export const PhotoCard: FC<Props> = ({
   const [isOpen, setIsOpen] = useState(false)
 
   const onCopy = () => {
-    navigator.clipboard.writeText(src)
+    navigator.clipboard.writeText(photo.src ?? '')
   }
   const onDelete = async () => {
     setIsOpen(false)
@@ -58,7 +56,7 @@ export const PhotoCard: FC<Props> = ({
       setSubmitStatus('idle')
       await revalidatePhotosAction()
     } catch (error) {
-      onError(error.message)
+      onError?.((error as any)?.message)
       setSubmitStatus('error')
       setTimeout(() => {
         setSubmitStatus('idle')
@@ -78,7 +76,7 @@ export const PhotoCard: FC<Props> = ({
           className="object-contain cursor-pointer"
           height={450}
           width={800}
-          src={src}
+          src={photo.src ?? ''}
           onClick={onClick}
         />
         <CardFooter className="before:bg-white/10 font border-white/20 border-1 overflow-hidden p-1 absolute before:rounded-xl rounded-large bottom-0.5 w-[calc(100%_-_2px)] ml-[1px] shadow-small z-10 gap-0.5">
@@ -149,10 +147,10 @@ export const PhotoCard: FC<Props> = ({
               <p>on {formatDate(photo.createdAt as unknown as string)}</p>
             </div>
             <Avatar
-              alt={photo.author?.name}
+              alt={photo.author?.name || 'Unknown'}
               className="flex-shrink-0"
               size="sm"
-              src={photo.author?.image}
+              src={photo.author?.image || undefined}
               imgProps={{ referrerPolicy: 'no-referrer' }}
             />
           </div>

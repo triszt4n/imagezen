@@ -7,7 +7,9 @@ import { getAlbumsPublic } from '../../services/albums.services'
 import { NewAlbumInputs } from '../../types/album.types'
 
 export async function GET(req: NextRequest) {
-  const data = await getAlbumsPublic(req.nextUrl.searchParams.get('sortby'))
+  const data = await getAlbumsPublic(
+    req.nextUrl.searchParams.get('sortby') ?? 'createdAt_desc',
+  )
   return NextResponse.json(data)
 }
 

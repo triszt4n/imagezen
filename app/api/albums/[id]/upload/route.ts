@@ -62,7 +62,7 @@ export async function POST(
         const fileName = await uploadFileToS3(
           buffer,
           `${params.id}/${photo.id}.${file.name.split('.').pop()}`,
-          photo.album.public,
+          photo.album!.public,
         )
         console.log('[UPLOAD SUCCESS] ' + fileName)
         return photo
@@ -74,7 +74,7 @@ export async function POST(
     console.error('[UPLOAD FAILED] ', error)
     return NextResponse.json(
       { error },
-      { status: error['$metadata']?.httpStatusCode || 500 },
+      { status: (error as any)['$metadata']?.httpStatusCode || 500 },
     )
   }
 }

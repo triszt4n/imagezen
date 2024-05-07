@@ -1,3 +1,4 @@
+import { Photo } from '@prisma/client'
 import { Session, getServerSession } from 'next-auth'
 import { authOptions } from '../lib/authOptions'
 import { getSignedFileUrl } from '../lib/getSignedUrl'
@@ -49,12 +50,15 @@ export async function getAlbumsUser() {
     const mappedData = await Promise.all(
       data.map(async (au) => {
         if (!au.album.public) {
-          const firstPhoto = au.album.photos[0]
-          const signedUrl = await getSignedFileUrl(
-            `${firstPhoto.albumId}/${firstPhoto.id}.${firstPhoto.filename.split('.').pop()}`,
-            process.env.S3_BUCKET_NAME,
-          )
-          au.album.photos[0].src = signedUrl
+          const firstPhoto: Photo | undefined = au.album.photos[0]
+
+          if (firstPhoto) {
+            const signedUrl = await getSignedFileUrl(
+              `${firstPhoto.albumId}/${firstPhoto.id}.${firstPhoto.filename.split('.').pop()}`,
+              process.env.S3_BUCKET_NAME ?? '',
+            )
+            au.album.photos[0].src = signedUrl
+          }
         }
         return au.album
       }),
@@ -70,7 +74,7 @@ export async function getAlbumsUser() {
   }
 }
 
-export async function getAlbumsPublic(sortBy: string) {
+export async function getAlbumsPublic(sortBy: string = 'createdAt_desc') {
   const [sortField, sortDirection] = sortBy?.split('_') ?? ['createdAt', 'desc']
 
   const data = await prisma.album.findMany({
@@ -132,10 +136,10 @@ export async function getAlbumPhotos(id: string) {
 
   const mappedData = await Promise.all(
     data.map(async (photo) => {
-      if (!photo.album.public) {
+      if (!photo.album?.public) {
         const signedUrl = await getSignedFileUrl(
           `${photo.albumId}/${photo.id}.${photo.filename.split('.').pop()}`,
-          process.env.S3_BUCKET_NAME,
+          process.env.S3_BUCKET_NAME ?? '',
         )
         photo.src = signedUrl
       }

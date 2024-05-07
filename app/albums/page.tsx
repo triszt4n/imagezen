@@ -39,7 +39,8 @@ export default async function MyAlbumsPage() {
                   key={album.id}
                   album={{
                     ...album,
-                    author: album.users.find((u) => u.role === Role.ADMIN).user,
+                    author: album.users.find((u) => u.role === Role.ADMIN)
+                      ?.user,
                   }}
                   firstPhoto={album.photos[0]}
                   showPublicChip

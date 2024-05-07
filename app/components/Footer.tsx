@@ -39,13 +39,13 @@ export default function Footer() {
             <div className="pb-2 font-bold">Site map</div>
             <div className="flex flex-col items-end gap-0">
               <Link className="text-xs" href="/">
-                Home: Browse public albums
+                Home page
               </Link>
               <Link className="text-xs" href="/albums">
-                Browse your albums
+                Your albums page
               </Link>
-              <Link className="text-xs" href="/login">
-                Login page
+              <Link className="text-xs" href="/albums/new">
+                New album page
               </Link>
             </div>
           </div>

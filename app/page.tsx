@@ -2,7 +2,6 @@
 
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { Role } from '@prisma/client'
-import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import ActionButton from './components/ActionButton'
 import Container from './components/Container'
@@ -25,19 +24,13 @@ async function getData(
 }
 
 export default function Home() {
-  const { data: session } = useSession()
-
   const [data, setData] = useState<
-    { error: { message: string } } | AlbumFull[]
+    { error: { message: string } } | AlbumFull[] | undefined
   >(undefined)
 
   useEffect(() => {
     getData().then((data) => setData(data))
   }, [])
-
-  useEffect(() => {
-    console.log('FRONTEND SESSION', session)
-  }, [session])
 
   const onSortChanged = (newType: string) => {
     if (!data || 'error' in data) return
@@ -106,7 +99,8 @@ export default function Home() {
                   key={album.id}
                   album={{
                     ...album,
-                    author: album.users.find((u) => u.role === Role.ADMIN).user,
+                    author: album?.users?.find((u) => u.role === Role.ADMIN)
+                      ?.user,
                   }}
                   firstPhoto={album.photos[0]}
                 />

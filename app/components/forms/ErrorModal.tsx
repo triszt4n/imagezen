@@ -47,7 +47,7 @@ export default function ErrorModal({
                 variant="light"
                 onPress={() => {
                   onClose()
-                  onOutsideClose()
+                  onOutsideClose?.()
                 }}
               >
                 I understand

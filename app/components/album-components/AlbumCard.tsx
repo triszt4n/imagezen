@@ -51,7 +51,7 @@ const AlbumCard: FC<
           name={album.author?.name}
           description="Owner"
           avatarProps={{
-            src: album.author?.image,
+            src: album.author?.image ?? undefined,
             size: 'sm',
             showFallback: true,
           }}

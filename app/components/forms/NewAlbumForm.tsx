@@ -23,7 +23,7 @@ export default function NewAlbumForm({ title, defaultValues }: Props) {
   const [submitStatus, setSubmitStatus] = useState<
     'idle' | 'loading' | 'error' | 'success'
   >('idle')
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<string | undefined>(undefined)
   const router = useRouter()
 
   return (
@@ -61,7 +61,7 @@ export default function NewAlbumForm({ title, defaultValues }: Props) {
           }}
           onError={async ({ response, error }) => {
             setSubmitStatus('error')
-            const data = await response.json()
+            const data = await response?.json()
             setError(
               data.message ?? 'An error occured while processing your request.',
             )
@@ -88,7 +88,7 @@ export default function NewAlbumForm({ title, defaultValues }: Props) {
             validationOptions={{
               maxLength: 255,
             }}
-            defaultValue={defaultValues?.description}
+            defaultValue={defaultValues?.description ?? undefined}
           />
           <Checkbox
             {...register('public', {})}

@@ -64,7 +64,7 @@ export default function NavbarSitewide() {
                   radius="md"
                   size="md"
                   showFallback
-                  src={session.user.image}
+                  src={session.user.image ?? undefined}
                   imgProps={{ referrerPolicy: 'no-referrer' }}
                 />
               </DropdownTrigger>

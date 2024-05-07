@@ -43,6 +43,7 @@ export const UploadField = ({
       instantUpload={false}
       acceptedFileTypes={[accept]}
       required={required}
+      // @ts-ignore
       onupdatefiles={setFiles}
       allowMultiple={multiple}
       maxFiles={maxFiles}

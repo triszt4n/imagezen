@@ -20,7 +20,7 @@ export default function NewMemberForm({ users, albumId }: Props) {
   const [submitStatus, setSubmitStatus] = useState<
     'idle' | 'loading' | 'error' | 'success'
   >('idle')
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<string | undefined>(undefined)
 
   return (
     <>
@@ -41,7 +41,7 @@ export default function NewMemberForm({ users, albumId }: Props) {
           }}
           onError={async ({ response, error }) => {
             setSubmitStatus('error')
-            const data = await response.json()
+            const data = await response?.json()
             setError(
               data.message ?? 'An error occured while processing your request.',
             )

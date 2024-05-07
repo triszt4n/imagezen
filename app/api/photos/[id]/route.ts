@@ -27,9 +27,9 @@ export async function DELETE(
   })
 
   const s3Response = await deleteFile(
-    photo.albumId,
+    photo.albumId!,
     photo.id,
-    photo.filename.split('.').pop(),
+    photo.filename.split('.').pop() ?? '',
   )
 
   return NextResponse.json({ photo, s3Response })

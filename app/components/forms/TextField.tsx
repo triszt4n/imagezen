@@ -49,7 +49,7 @@ export const TextField = ({
       type={type}
       defaultValue={defaultValue}
       isInvalid={!!errors?.[fieldName]}
-      errorMessage={errors?.[fieldName]?.message.toString()}
+      errorMessage={errors?.[fieldName]?.message?.toString()}
       description={helper}
       {...register(fieldName, {
         required: required ? 'Required field' : false,

@@ -21,7 +21,7 @@ export async function POST(
     },
   })
 
-  if (requestingAlbumUser.role === Role.USER)
+  if (!requestingAlbumUser || requestingAlbumUser?.role === Role.USER)
     return NextResponse.json(
       { message: 'Forbidden: not admin of album!' },
       { status: 403 },

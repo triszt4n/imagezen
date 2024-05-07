@@ -1,4 +1,5 @@
 import { Inter } from 'next/font/google'
+import { PropsWithChildren } from 'react'
 import Footer from './components/Footer'
 import NavbarSitewide from './components/NavbarSitewide'
 import './global.css'
@@ -14,7 +15,9 @@ export const metadata = {
   description: 'Image uploading service.',
 }
 
-export default function RootLayout({ children }) {
+type Props = PropsWithChildren<{}>
+
+export default function RootLayout({ children }: Props) {
   return (
     <html lang="en" className={inter.className}>
       <body>

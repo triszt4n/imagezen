@@ -23,7 +23,7 @@ export default function NewPhotoForm({ title, albumId }: Props) {
   const [submitStatus, setSubmitStatus] = useState<
     'idle' | 'loading' | 'error' | 'success'
   >('idle')
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<string | undefined>(undefined)
   const router = useRouter()
 
   return (
@@ -60,7 +60,7 @@ export default function NewPhotoForm({ title, albumId }: Props) {
           }}
           onError={async ({ response, error }) => {
             setSubmitStatus('error')
-            const data = await response.json()
+            const data = await response?.json()
             setError(
               data.message ?? 'An error occured while processing your request.',
             )
