@@ -4,9 +4,6 @@ export default withAuth({
   callbacks: {
     authorized: async ({ token }) => !!token,
   },
-  pages: {
-    signIn: '/login',
-  },
 })
 export const config = {
   matcher: ['/albums:path*', '/photos:path*', '/profile'],

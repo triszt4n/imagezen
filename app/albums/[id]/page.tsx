@@ -16,7 +16,7 @@ async function getData(
 ): Promise<
   { error: { message: string } } | (AlbumWithUsers & { photoCount: number })
 > {
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/albums/${id}`, {
+  const response = await fetch(`/api/albums/${id}`, {
     method: 'GET',
     headers: headers(),
     next: {
@@ -34,7 +34,7 @@ async function getData(
 }
 
 async function getUsers(): Promise<{ error: { message: string } } | User[]> {
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/users`, {
+  const response = await fetch(`/api/users`, {
     method: 'GET',
     headers: headers(),
   })
@@ -50,16 +50,13 @@ async function getPhotos(
 ): Promise<
   { error: { message: string } } | Array<Photo & { author: User; src: string }>
 > {
-  const response = await fetch(
-    `${process.env.NEXTAUTH_URL}/api/albums/${id}/photos`,
-    {
-      method: 'GET',
-      headers: headers(),
-      next: {
-        tags: ['photos'],
-      },
+  const response = await fetch(`/api/albums/${id}/photos`, {
+    method: 'GET',
+    headers: headers(),
+    next: {
+      tags: ['photos'],
     },
-  )
+  })
   const data = await response.json()
   if (!response.ok) {
     return { error: data }

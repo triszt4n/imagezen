@@ -9,7 +9,7 @@ import { AlbumFull } from '../types/album.types'
 async function getData(): Promise<
   { error: { message: string } } | AlbumFull[]
 > {
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/albums/user`, {
+  const response = await fetch(`/api/albums/user`, {
     method: 'GET',
     headers: headers(),
     next: {
